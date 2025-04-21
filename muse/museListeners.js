@@ -26,15 +26,24 @@ function didReceivePpg(data) {
 
 function didReceiveAccel(data) {
 
-    //parse the samples with multiplier
-    let _samples = parseImuReading(data, 0.0000610352).samples;
-
-    //average out the samples
+    const _samples = parseImuReading(data, 0.0000610352).samples;
+  
+    // Average the 3-axis values
     accel.x = (_samples[0].x + _samples[1].x + _samples[2].x) / 3;
     accel.y = (_samples[0].y + _samples[1].y + _samples[2].y) / 3;
     accel.z = (_samples[0].z + _samples[1].z + _samples[2].z) / 3;
-    //console.log("Accel:", accel);
-}
+  
+    // Normalize based on observed realistic ranges
+    const normX = normalize(accel.x, -1.0, +1.0); // You can tighten this later
+    const normY = normalize(accel.y, -0.7, +0.7);
+    const normZ = normalize(accel.z, 0.4, 1.2);   // Gravity vector
+  
+    // Send to MIDI CC
+    sendStateCC(STATE_MOVE_X, normX);
+    sendStateCC(STATE_MOVE_Y, normY);
+    sendStateCC(STATE_MOVE_Z, normZ);
+  }
+  
 
 function didReceiveGyro(data) {
 
@@ -52,3 +61,8 @@ function didReceiveBattery(data) {
     batteryLevel = data.getUint16(2) / 512;
     console.log("Battery level:", batteryLevel, "%");
 }
+
+
+function normalize(val, min, max) {
+    return Math.min(Math.max((val - min) / (max - min), 0), 1);
+  }

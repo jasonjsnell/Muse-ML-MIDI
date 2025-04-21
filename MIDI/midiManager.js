@@ -10,6 +10,7 @@ let stateMidiCcNumber = 20;
 let stateMidiChannels = [-1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 let stateMidiValues = new Array(16).fill(-1);
 let stateSmoothingValues = [
+  [], //no state
   [2, 2],  //noise
   [4, 4],  //muscle
   [2, 1],  //focus
@@ -17,7 +18,9 @@ let stateSmoothingValues = [
   [1, 1],  //meditation
   [1, 1],  //dream
   [50, 8], //heart
-  [2, 2],  //movement
+  [2, 2],  //move x
+  [2, 2],  //move y
+  [2, 2],  //move z
 ];
 
 
