@@ -1,7 +1,9 @@
 class DmxLightModelLitake {
 
     // Constructor with default parameter values
-    constructor(startingAddress) {
+    constructor(startingAddress, active) {
+
+        this.active = active;
 
         console.log("DmxLightModelLitake", startingAddress);
 
@@ -28,28 +30,32 @@ class DmxLightModelLitake {
         this.chColorShade = startingAddress + 5;
 
         // Initialize fixed settings
-        this.routeToMidi(this.chStrobe, this.STROBE);
-        this.routeToMidi(this.chMode, this.MODE);
-        this.routeToMidi(this.chColorShade, this.SHADE);
+        this._routeToMidi(this.chStrobe, this.STROBE);
+        this._routeToMidi(this.chMode, this.MODE);
+        this._routeToMidi(this.chColorShade, this.SHADE);
+    }
+
+    setActive(active) {
+        this.active = active;
     }
 
     set(brightness, r, g, b) {
 
         if (r != NaN && g != NaN && b != NaN) {
 
-            let _r = this.midiRange(parseInt(r));
-            let _g = this.midiRange(parseInt(g));
-            let _b = this.midiRange(parseInt(b));
+            let _r = this._midiRange(parseInt(r));
+            let _g = this._midiRange(parseInt(g));
+            let _b = this._midiRange(parseInt(b));
 
-            this.routeToMidi(this.chBrightness, brightness);
-            this.routeToMidi(this.chRed, _r);
-            this.routeToMidi(this.chGreen, _g);
-            this.routeToMidi(this.chBlue, _b);
+            this._routeToMidi(this.chBrightness, brightness);
+            this._routeToMidi(this.chRed, _r);
+            this._routeToMidi(this.chGreen, _g);
+            this._routeToMidi(this.chBlue, _b);
 
         }
     }
 
-    midiRange(value) {
+    _midiRange(value) {
         if (value < 0) {
             value = 0;
         } else if (value > 127) {
@@ -59,18 +65,21 @@ class DmxLightModelLitake {
     }
 
     //0x8E = channel 15
-    routeToMidi(note, value) {
+    _routeToMidi(note, value) {
 
-        value = parseInt(value);
-        if (value < 0) {
-            value = 0;
-        } else if (value > 127) {
-            value = 127;
-        }
+        if (this.active) {
 
-        for (let i = 0; i < midiOuts.length; i++) {
-            let midiOut = midiOuts[i];
-            midiOut.send([0x9E, note, value]);
+            value = parseInt(value);
+            if (value < 0) {
+                value = 0;
+            } else if (value > 127) {
+                value = 127;
+            }
+
+            for (let i = 0; i < midiOuts.length; i++) {
+                let midiOut = midiOuts[i];
+                midiOut.send([0x9E, note, value]);
+            }
         }
     }
 }

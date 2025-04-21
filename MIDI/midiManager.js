@@ -1,23 +1,24 @@
 let midiOuts;
-//noise, muscle, focus, clear, meditation, dream, heart
 
-let stateCcOn = [true, true, true, true, true, true, true, true, true];
+//noise, muscle, focus, clear, meditation, dream, heart, movement
+let stateCcOn = [false, false, false, false, false, false, false, false];
 
-
+//biometric CC streams are transmitted on MIDI CC 20, each on their own channel
 let stateMidiCcNumber = 20;
-let stateMidiChannels = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-let stateMidiValues = [-1, -1, -1, -1, -1, -1, -1, -1, -1];
+let stateMidiChannels = [1, 2, 3, 4, 5, 6, 7, 8];
+let stateMidiValues = [-1, -1, -1, -1, -1, -1, -1, -1];
 let stateSmoothingValues = [
-  [2, 2], //noise
-  [4, 4], //muscle
-  [2, 1], //focus
-  [2, 2], //clear
-  [1, 1], //meditation
+  [2, 2],  //noise
+  [4, 4],  //muscle
+  [2, 1],  //focus
+  [2, 2],  //clear
+  [1, 1],  //meditation
   [1, 1],  //dream
-  [50, 8]  //heart
+  [50, 8], //heart
+  [2, 2],  //movement
 ];
 
-let stateNoteOn = [true, true, true, true, true, true, true, true, true];
+let stateNoteOn = [false, false, false, false, false, false, false, false];
 
 //Init WebMIDI
 WebMidi.enable(function (err) {
@@ -37,13 +38,16 @@ WebMidi.enable(function (err) {
       return;
     }
 
-    //set all to zero
-    // for (let i= 0; i < stateMidiChannels.length; i++){
-    //   sendStateCC(i, 0);
-    // }
-
-    dmxLight = new DmxLightModelLitake(1);
-
+    // -- DMX OPTIONS -- 
+    //send out to a DMX configuration 
+    //requires MIDI to DMX converter like a Decabox
+    //https://response-box.com/gear/product/decabox-protocol-converter-basic-firmware/
+    const startAddress = 1
+    const dmxActive = false
+    dmxLight = new DmxLightModelLitake(startAddress, dmxActive); 
+    
+    //alternately, you can use an Enttec box and have an incoming MIDI cc map to the Enttec VST plugin
+    //https://www.enttec.com/product/dmx-usb-interfaces/dmx-usb-pro-professional-1u-usb-to-dmx512-converter/
   }
 });
 
