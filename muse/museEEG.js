@@ -9,6 +9,8 @@ class EEGWave {
         this.binHigh = binHigh
         this.spectrum = []
         this.average = 0;
+        this.history = [];
+        this.maxHistoryLength = 75;
     }
 
     //receive frequency spectrum for just this wave from FFT
@@ -21,6 +23,13 @@ class EEGWave {
         this.spectrum = withSpectrum;
         this.average = withSpectrum.reduce((a, b) => a + b) / withSpectrum.length;
 
+        // push new average to history
+        this.history.push(this.average);
+
+        // trim to max history length
+        if (this.history.length > this.maxHistoryLength) {
+            this.history.shift(); // remove oldest item
+        }
     }
 }
 
@@ -192,8 +201,6 @@ function processEEG(sensor, data) {
     eeg.alpha = alphaTotal / sensorTotal;
     eeg.beta = betaTotal / sensorTotal;
     eeg.gamma = gammaTotal / sensorTotal;
-
-    //TODO: add histories, then analyze histories for peaks, 
 
 }
 
