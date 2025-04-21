@@ -24,7 +24,8 @@ function processPPG(data) {
 
     //what percentage is it of the max?
     let ppgPercent = (ppg.amplitude-ppg.min) / (ppg.max-ppg.min);
-    sendStateCC(6, ppgPercent);
+    
+    sendStateCC(STATE_HEART, ppgPercent);
     //console.log("ppgPercent: " + (ppgPercent * 100).toFixed(0));
     //if recent value is near the max value, it's a heartbeat
     if (ppgPercent > BEAT_DETECTION_THRESHOLD) { //threshold for a beat detection

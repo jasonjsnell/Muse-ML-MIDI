@@ -5,3 +5,7 @@ const STATE_FOCUS      = 3;
 const STATE_CLEAR      = 4;
 const STATE_MEDITATION = 5;
 const STATE_DREAM      = 6;
+const STATE_HEART      = 7;
+const STATE_MOVE_X     = 8;
+const STATE_MOVE_Y     = 9;
+const STATE_MOVE_Z     = 10;

@@ -1,12 +1,14 @@
 let midiOuts;
 
-//noise, muscle, focus, clear, meditation, dream, heart, movement
-let stateCcOn = [false, false, false, false, false, false, false, false];
+//states: noise, muscle, focus, clear, meditation, dream, heart, movement
+
+let stateCcOn = new Array(16).fill(false);
+let stateNoteOn = new Array(16).fill(false);
 
 //biometric CC streams are transmitted on MIDI CC 20, each on their own channel
 let stateMidiCcNumber = 20;
-let stateMidiChannels = [1, 2, 3, 4, 5, 6, 7, 8];
-let stateMidiValues = [-1, -1, -1, -1, -1, -1, -1, -1];
+let stateMidiChannels = [-1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+let stateMidiValues = new Array(16).fill(-1);
 let stateSmoothingValues = [
   [2, 2],  //noise
   [4, 4],  //muscle
@@ -18,7 +20,7 @@ let stateSmoothingValues = [
   [2, 2],  //movement
 ];
 
-let stateNoteOn = [false, false, false, false, false, false, false, false];
+
 
 //Init WebMIDI
 WebMidi.enable(function (err) {
@@ -37,6 +39,11 @@ WebMidi.enable(function (err) {
       console.error("No MIDI output available.");
       return;
     }
+
+    console.log("Available MIDI outputs:");
+    midiOuts.forEach((out, i) => {
+      console.log(`${i}: ${out.name} (id: ${out.id})`);
+    });
 
     // -- DMX OPTIONS -- 
     //send out to a DMX configuration 
@@ -65,32 +72,15 @@ document.querySelectorAll(".note-checkbox").forEach((checkbox) => {
   });
 });
 
-// Update buttons to call the correct function
-function testMidiNoteButtonClicked(index) {
-  console.log("State", index, "is send a test message for MIDI mapping");
-  if (!window.midiOuts) return;
-  for (let midiOut of midiOuts) {
-    midiOut.playNote("C3", stateMidiChannels[index]);
-  }
-}
-
-function testMidiCCButtonClicked(index) {
-  console.log("State", index, "is send a test message for MIDI mapping");
-  if (!window.midiOuts) return;
-  for (let midiOut of midiOuts) {
-    midiOut.sendControlChange(stateMidiCcNumber, Math.floor(Math.random() * 128), stateMidiChannels[index]);
-  }
-}
-
 
 function convertMlResultsToMidiCC() {
 
-  sendStateCC(0, state.noise);
-  sendStateCC(1, state.muscle);
-  sendStateCC(2, state.focus);
-  sendStateCC(3, state.clear);
-  sendStateCC(4, state.meditation);
-  sendStateCC(5, state.dream);
+  sendStateCC(STATE_NOISE, state.noise);
+  sendStateCC(STATE_MUSCLE, state.muscle);
+  sendStateCC(STATE_FOCUS, state.focus);
+  sendStateCC(STATE_CLEAR, state.clear);
+  sendStateCC(STATE_MEDITATION, state.meditation);
+  sendStateCC(STATE_DREAM, state.dream);
 }
 
 let midiStateBoost = 1.0
@@ -145,7 +135,6 @@ function sendStateCC(stateID, stateValue) {
         }
       }
 
-
       //get state channel
       let stateMidiChannel = stateMidiChannels[stateID];
 
@@ -182,10 +171,10 @@ function updateNoteState(stateID, newState) {
 }
 
 //Test MIDI button
-function testMidiButtonClicked(buttonIndex) {
+function testMidiCCButtonClicked(buttonIndex) {
   //send random value between 0 and 1 to midi CC function
   //this will make sure that it's a different value each time
-  console.log("State", buttonIndex, "is send a test message for MIDI mapping");
+  console.log("State", buttonIndex, "is sending a test message for MIDI mapping");
 
   //send to all midi outs
   for (let i = 0; i < midiOuts.length; i++) {
@@ -198,10 +187,29 @@ function testMidiButtonClicked(buttonIndex) {
     );
   }
 }
+// Update buttons to call the correct function
+function testMidiNoteButtonClicked(buttonIndex) {
+  const channel = stateMidiChannels[buttonIndex];
+  const note = "C4";
+
+  console.log("State", buttonIndex, "is sending a test note:", note, "on channel", channel);
+
+  for (let i = 0; i < midiOuts.length; i++) {
+    let midiOut = midiOuts[i];
+
+    // Send Note On
+    midiOut.playNote(note, channel);
+
+    // Send Note Off after 250ms
+    setTimeout(() => {
+      midiOut.stopNote(note, channel);
+    }, 250);
+  }
+}
+
 
 
 //BPM quantized
-let HEARTBEAT_MIDI_CHANNEL = 10;
 let heartPulse = 1.0;
 let midiBpmActive = false;
 function activateMidiBpm(active) {
@@ -238,12 +246,24 @@ if (PPG_QUANTIZED){
 }
 
 //Heart non-quantized
-function playMidiHeartbeat(){
-  //send midi note C3 out on channel 10
+function playMidiHeartbeat() {
+
+  // Only send if heartbeat note is enabled
+  if (!stateNoteOn[STATE_HEART]) return;
+
+  const channel = stateMidiChannels[STATE_HEART]; // get configured channel
+  const note = "C4"; // or "C3" if you meant that
+
   for (let i = 0; i < midiOuts.length; i++) {
     let midiOut = midiOuts[i];
-    midiOut.playNote("C3", HEARTBEAT_MIDI_CHANNEL);
-    heartPulse = 1.0;
+    midiOut.playNote(note, channel);
+  }
 
+  heartPulse = 1.0;
+
+  for (let i = 0; i < midiOuts.length; i++) {
+    let midiOut = midiOuts[i];
+    midiOut.playNote(note, channel);
+    setTimeout(() => midiOut.stopNote(note, channel), 250);
   }
 }
