@@ -1,0 +1,158 @@
+
+
+  <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="p5.js"></script>
+  <script src="ml5.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <meta charset="utf-8" />
+</head>
+
+<body>
+
+  <div class="body-wrapper">
+<!-- Main layout container -->
+<div class="container">
+
+  <!-- Left side: Streaming data -->
+  <div class="left-panel">
+    <h2>Muse Headband Data &rarr; </h2>
+    <div class="canvas-wrapper">
+      <main></main>
+      <button id="connect-button" class="grey-button">Connect to Muse</button>
+    </div>
+  </div>
+
+  <!-- Right side: MIDI table -->
+  <div class="right-panel">
+    <h2>MIDI Outputs</h2>
+
+    <div class="midi-wrapper">
+      
+      <div class="midi-grid">
+
+        <!-- Header -->
+        <div class="midi-row header">
+          <div class="col state" data-tooltip="Brainwave, biometric, or device signal being measured">State</div>
+          <div class="col" data-tooltip="Toggle MIDI note output for this state">Note</div>
+          <div class="col" data-tooltip="Send single MIDI note to DAW for mapping">Map</div>
+          <div class="col" data-tooltip="Toggle streaming MIDI CC output for this state">CC</div>
+          <div class="col" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</div>
+        </div>
+  
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Signal noise occurs when headset sensors have no or poor contact with forehead">Signal Noise</div>
+          <div class="col"><input type="checkbox" id="note-0" class="note-checkbox" data-tooltip="Toggle MIDI notes for signal noise peaks" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(0)" data-tooltip="Send single MIDI note to DAW for mapping">Map</button></div>
+          <div class="col"><input type="checkbox" id="cc-0" class="cc-checkbox" data-tooltip="Toggle stream of signal noise as a MIDI CC" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(0)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of tension or movement in the jaw, forehead, and face, including talking">Jaw / Face Tension</div>
+          <div class="col"><input type="checkbox" id="note-1" class="note-checkbox" data-tooltip="Toggle MIDI notes for muscle tension peaks" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(1)" data-tooltip="Send single MIDI note to DAW for mapping">Map</button></div>
+          <div class="col"><input type="checkbox" id="cc-1" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream of muscle tension data" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(1)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of a focused or active mental state (beta)">Mental Focus</div>
+          <div class="col"><input type="checkbox" id="note-2" class="note-checkbox" data-tooltip="Toggle MIDI notes that get trigged during focus (beta) or insight (gamma) peaks" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(2)" data-tooltip="Send single MIDI note to DAW for mapping">Map</button></div>
+          <div class="col"><input type="checkbox" id="cc-2" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream of focus data" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(2)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of a clear, blank, or zoned out mental state. Since this state has no peaks, no MIDI notes are triggered">Clear Mind</div>
+          <div class="col">-</div>
+          <div class="col">-</div>
+          <div class="col"><input type="checkbox" id="cc-3" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream that increases when your mind is clear or blank" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(3)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of a meditative state (alpha); relaxing, and letting go">Meditative State</div>
+          <div class="col"><input type="checkbox" id="note-4" class="note-checkbox" data-tooltip="Toggle MIDI notes that get triggered during meditation (alpha)" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(4)" data-tooltip="Send single MIDI note to DAW for mapping">Map</button></div>
+          <div class="col"><input type="checkbox" id="cc-4" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream that increases as you meditate" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(4)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of dreamy state (theta), like a mid-afternoon fatigue, falling asleep, or deep meditation">Dreamy State</div>
+          <div class="col"><input type="checkbox" id="note-5" class="note-checkbox" data-tooltip="Toggle MIDI notes that get triggered during dreamy states" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(5)" data-tooltip="Send single MIDI note to DAW for mapping">Map</button></div>
+          <div class="col"><input type="checkbox" id="cc-5" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream that increases when you are drowsy or dreaming" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(5)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of heartbeat (MIDI note) and HRV (MIDI CC)">Heartbeat / HRV</div>
+          <div class="col"><input type="checkbox" id="note-6" class="note-checkbox" data-tooltip="Send quantized MIDI note at your hearbeat's BPM" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(6)" data-tooltip="Send single MIDI note to DAW for mapping">Map</button></div>
+          <div class="col"><input type="checkbox" id="cc-6" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream of your HRV (heart coherence)" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(6)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+        <div class="midi-row header">
+          <div class="col state" data-tooltip="Movement data from the Muse accelerometer sensor">Movement</div>
+          <div class="col" data-tooltip="Toggle MIDI note output for this state">CC</div>
+          <div class="col" data-tooltip="Send single MIDI note to DAW for mapping">X</div>
+          <div class="col" data-tooltip="Toggle streaming MIDI CC output for this state">Y</div>
+          <div class="col" data-tooltip="Send single MIDI CC value to DAW for mapping">Z</div>
+        </div>
+
+        <div class="midi-row">
+          <div class="col state" data-tooltip="Detection of head movement in any direction">Head Movement</div>
+          <div class="col"><input type="checkbox" id="cc-7" class="cc-checkbox" data-tooltip="Toggle MIDI CC stream of X (nod), Y (ear-to-shoulder), and Z (shake) movement" /></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(71)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(72)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+          <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(72)" data-tooltip="Send single MIDI CC value to DAW for mapping">Map</button></div>
+        </div>
+
+      </div>
+      
+    </div>
+
+  </div>
+
+</div>
+
+
+<a id="help" href="help.html">Help documentation</a>
+
+
+  <script src="muse/utils-json.js"></script>
+  <script src="muse/muse.js"></script>
+  <script src="muse/fft.js"></script>
+  <script src="muse/museDataBuffer.js"></script>
+  <script src="muse/museEEG.js"></script>
+  <script src="muse/musePPG.js"></script>
+  <script src="muse/museParser.js"></script>
+  <script src="muse/museListeners.js"></script>
+  <script src="muse/museSetup.js"></script>
+  <script src="muse/museBluetooth.js"></script>
+  <script src="muse/webBLE.js"></script>
+  <script src="muse/museML.js"></script>
+  <script src="muse/museConstants.js"></script>
+
+  <script src="DMX/DmxLightModelLitake.js"></script>
+  <script src="DMX/dmxManager.js"></script>
+  <script src="MIDI/webmidi.js"></script>
+  <script src="MIDI/midiManager.js"></script>
+
+  <script src="userSelections.js"></script>
+
+  
+
+  <script src="sketch.js"></script>
+
+</div>
+</body>
+
+</html>
