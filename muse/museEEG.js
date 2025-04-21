@@ -193,6 +193,8 @@ function processEEG(sensor, data) {
     eeg.beta = betaTotal / sensorTotal;
     eeg.gamma = gammaTotal / sensorTotal;
 
+    //TODO: add histories, then analyze histories for peaks, 
+
 }
 
 

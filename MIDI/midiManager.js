@@ -9,18 +9,21 @@ let stateNoteOn = new Array(16).fill(false);
 let stateMidiCcNumber = 20;
 let stateMidiChannels = [-1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 let stateMidiValues = new Array(16).fill(-1);
+
+//smaller values, smoother movement
+//bigger values more responsive
 let stateSmoothingValues = [
   [], //no state
-  [2, 2],  //noise
-  [4, 4],  //muscle
+  [5, 5],  //noise
+  [5, 5],  //muscle
   [2, 1],  //focus
   [2, 2],  //clear
   [1, 1],  //meditation
   [1, 1],  //dream
   [50, 8], //heart
-  [2, 2],  //move x
-  [2, 2],  //move y
-  [2, 2],  //move z
+  [5, 2],  //move x
+  [5, 2],  //move y
+  [5, 2],  //move z
 ];
 
 

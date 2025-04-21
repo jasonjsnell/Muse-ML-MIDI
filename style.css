@@ -1,4 +1,4 @@
-/* Base reset and dark theme */
+/* Basics */
 html, body {
   margin: 0;
   padding: 0;
@@ -11,6 +11,9 @@ html, body {
 
 header {
   padding: 10px 20px 0 20px;
+}
+.header {
+ text-align: center;
 }
 
 h1 {
@@ -48,6 +51,24 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Buttons */
+button.grey-button {
+  background-color: #444;
+  color: #eee;
+  border: 1px solid #666;
+  padding: 6px 9px;
+  font-size: 12px;
+  line-height: 0.8;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  vertical-align: middle;
+}
+
+button.grey-button:hover {
+  background-color: #666;
+  border-color: #888;
+}
+
 
 /* FLEX LAYOUT */
 
@@ -56,6 +77,7 @@ a:hover {
   justify-content: center;
   align-items: center;       /* Vertical centering */
   height: 100vh;  
+  flex-direction: column;
 }
 
 .container {
@@ -65,22 +87,24 @@ a:hover {
   align-items: flex-start;
 }
 
-/* LEFT PANEL (Streaming) */
-.left-panel {
-  width: 350px;
+.container.vertical {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1000px;
+}
+/* .container.vertical {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  align-items: center; /* Now it works */
+} */
 
-}
-
+/* LIVE PANEL */
 .canvas-wrapper {
   position: relative;
   width: 350px;
   height: 350px;
 }
-
 
 main {
   background-color: #000;
@@ -92,7 +116,6 @@ main {
   overflow: hidden;
   border: 1px solid #444;
   border-radius: 8px;     
-  overflow: hidden; 
 }
 
 #connect-button {
@@ -116,17 +139,9 @@ main {
 
 
 
-/* RIGHT PANEL (MIDI Table) */
-.right-panel {
+/* MIDI PANEL */
 
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  align-items: center;
 
-}
-
-/* table with CSS */
 .midi-grid {
   display: flex;
   flex-direction: column;
@@ -163,23 +178,7 @@ main {
 }
 
 
-/* Buttons */
-button.grey-button {
-  background-color: #444;
-  color: #eee;
-  border: 1px solid #666;
-  padding: 6px 9px;
-  font-size: 12px;
-  line-height: 0.8;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  vertical-align: middle;
-}
 
-button.grey-button:hover {
-  background-color: #666;
-  border-color: #888;
-}
 
 
 /* Checkboxes */
@@ -188,7 +187,6 @@ input[type="checkbox"] {
 }
 
 
-/* Headings */
 
 /* Help link */
 #help {
@@ -203,28 +201,12 @@ input[type="checkbox"] {
   text-decoration: underline;
 }
 
-/* Layout adjustments */
-body > table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-td:first-child {
-  padding: 20px;
-  width: 300px;
-}
-
-td:last-child {
-  padding: 20px;
-  width: auto;
-}
-
+/* Tooltip */
 [data-tooltip] {
   position: relative;
   cursor: help;
 }
 
-/* Tooltip box */
 [data-tooltip]::after {
   text-transform: none;
   content: attr(data-tooltip);
@@ -250,6 +232,68 @@ td:last-child {
   opacity: 1;
 }
 
+
+
+
+
+
+/* TABS */
+
+.tab-wrapper {
+  max-width: 900px;
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-buttons {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #444;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px 0;
+  background-color: #2a2a2a; /* darker when deselected */
+  color: #eee;
+  border: 1px solid #666;
+  border-bottom: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  border-radius: 0;
+}
+
+.tab-button.active {
+  background-color: #444; /* lighter when selected */
+  font-weight: bold;
+}
+
+.tab-button:hover {
+  background-color: #3a3a3a; /* lighter hover for deselected */
+}
+
+
+.tab-content {
+  border: 1px solid #666;
+  border-top: none;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background-color: #444;
+  border-radius: 0 0 8px 8px;
+  height: 100%;
+}
+
+
+.hidden {
+  display: none;
+}
 
 
 /* help page */
