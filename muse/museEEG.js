@@ -1,16 +1,16 @@
 //delta, theta, alpha, beta, gamma waves
+
 class EEGWave {
 
     //create wave with the low and high end of the wave, in Hz
     //for example, alpha is 8Hz - 12 Hz
     //so binLow = 8, binHigh = 12
     constructor(binLow, binHigh) {
+        
         this.binLow = binLow;
         this.binHigh = binHigh
         this.spectrum = []
         this.average = 0;
-        this.history = [];
-        this.maxHistoryLength = 75;
     }
 
     //receive frequency spectrum for just this wave from FFT
@@ -21,15 +21,7 @@ class EEGWave {
         //for example, alpha would take the values from 8Hz, 9Hz, 10Hz, and 11Hz
         //and average them into one value
         this.spectrum = withSpectrum;
-        this.average = withSpectrum.reduce((a, b) => a + b) / withSpectrum.length;
-
-        // push new average to history
-        this.history.push(this.average);
-
-        // trim to max history length
-        if (this.history.length > this.maxHistoryLength) {
-            this.history.shift(); // remove oldest item
-        }
+        this.average = withSpectrum.reduce((a, b) => a + b) / withSpectrum.length
     }
 }
 
@@ -73,15 +65,19 @@ class EEGSensor {
         let deltaLow = this._getPositionForFrequency(1, this.frequencies);
         let deltaHigh = this._getPositionForFrequency(3, this.frequencies);
         this.delta = new EEGWave(deltaLow, deltaHigh);
+        
         let thetaLow = this._getPositionForFrequency(4, this.frequencies);
         let thetaHigh = this._getPositionForFrequency(7, this.frequencies);
         this.theta = new EEGWave(thetaLow, thetaHigh);
+        
         let alphaLow = this._getPositionForFrequency(8, this.frequencies);
         let alphaHigh = this._getPositionForFrequency(12, this.frequencies);
         this.alpha = new EEGWave(alphaLow, alphaHigh);
+        
         let betaLow = this._getPositionForFrequency(13, this.frequencies);
         let betaHigh = this._getPositionForFrequency(30, this.frequencies);
         this.beta = new EEGWave(betaLow, betaHigh);
+        
         let gammaLow = this._getPositionForFrequency(31, this.frequencies);
         let gammaHigh = this._getPositionForFrequency(40, this.frequencies);
         this.gamma = new EEGWave(gammaLow, gammaHigh);
@@ -202,6 +198,64 @@ function processEEG(sensor, data) {
     eeg.beta = betaTotal / sensorTotal;
     eeg.gamma = gammaTotal / sensorTotal;
 
+    //update histories
+    updateEEGHistories();
+
+    //update peak detectors
+    runEEGPeakDetectors();
+
+}
+
+//EEG histories
+function updateEEGHistories() {
+
+    //push the most recent value into the history
+    eeg.deltaHistory.push(eeg.delta);
+    eeg.thetaHistory.push(eeg.theta);
+    eeg.alphaHistory.push(eeg.alpha);
+    eeg.betaHistory.push(eeg.beta);
+    eeg.gammaHistory.push(eeg.gamma);
+
+    // trim the histories to a max length
+    const maxLength = 75;
+    if (eeg.deltaHistory.length > maxLength) eeg.deltaHistory.shift();
+    if (eeg.thetaHistory.length > maxLength) eeg.thetaHistory.shift();
+    if (eeg.alphaHistory.length > maxLength) eeg.alphaHistory.shift();
+    if (eeg.betaHistory.length  > maxLength) eeg.betaHistory.shift();
+    if (eeg.gammaHistory.length > maxLength) eeg.gammaHistory.shift();
+}
+
+//peak detection
+//TODO: test these values
+let deltaPeakDetector = new EEGPeakDetector(STATE_MUSCLE, 0.99, 25, STATE_MUSCLE_NOTE);
+let thetaPeakDetector = new EEGPeakDetector(STATE_DREAM,  0.30, 250, STATE_DREAM_NOTE);
+let alphaPeakDetector = new EEGPeakDetector(STATE_MEDIT,  0.30, 250, STATE_MEDITATION_NOTE);
+let betaPeakDetector  = new EEGPeakDetector(STATE_FOCUS,  0.99, 10, STATE_FOCUS_BETA_NOTE);
+let gammaPeakDetector = new EEGPeakDetector(STATE_FOCUS,  0.90, 10, STATE_FOCUS_GAMMA_NOTE);
+
+function runEEGPeakDetectors() {
+    let peakDetectionOK = true;
+
+    // If noise is too high, skip all peak detection
+    if (state.noise > 0.1) {
+        peakDetectionOK = false;
+    }
+
+    // If muscle is too high, allow only delta detection
+    const allowNonDelta = state.muscle >= 0.1;
+  
+    if (peakDetectionOK) {
+        // Delta is allowed no matter what
+        deltaPeakDetector.detectPeak(eeg.deltaHistory);
+
+        // Others only if muscle isn't too high
+        if (allowNonDelta) {
+            thetaPeakDetector.detectPeak(eeg.thetaHistory);
+            alphaPeakDetector.detectPeak(eeg.alphaHistory);
+            betaPeakDetector.detectPeak(eeg.betaHistory);
+            gammaPeakDetector.detectPeak(eeg.gammaHistory);
+        }
+    }
 }
 
 
@@ -211,17 +265,19 @@ function _getAverageByIndex(arrays) {
 
     //create blank array to store the averages
     let avgArr = new Array(arrays[0].length).fill(0);
+
+    let arraysLength = arrays.length;
     
     //step through each empty slot in averaged array
     for (let s = 0; s < avgArr.length; s++) {
 
         //loop throgh the values in this position
         let positionAvg = 0;
-        for (let a = 0; a < arrays.length; a++) {
+        for (let a = 0; a < arraysLength; a++) {
             positionAvg += arrays[a][s]; //add them up
         }
         //divide to get average
-        positionAvg /= arrays.length;
+        positionAvg /= arraysLength;
 
         //store in slot
         avgArr[s] = positionAvg;

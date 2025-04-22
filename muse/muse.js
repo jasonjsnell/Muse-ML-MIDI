@@ -26,7 +26,12 @@ let eeg = {
   alpha: 0,
   beta: 0,
   gamma: 0,
-  sensors: []
+  sensors: [],
+  deltaHistory: [],
+  thetaHistory: [],
+  alphaHistory: [],
+  betaHistory: [],
+  gammaHistory: []
 }
 
 let state = {

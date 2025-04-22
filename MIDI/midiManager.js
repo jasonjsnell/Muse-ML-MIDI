@@ -57,8 +57,8 @@ WebMidi.enable(function (err) {
     //https://response-box.com/gear/product/decabox-protocol-converter-basic-firmware/
     const startAddress = 1
     const dmxActive = false
-    dmxLight = new DmxLightModelLitake(startAddress, dmxActive); 
-    
+    dmxLight = new DmxLightModelLitake(startAddress, dmxActive);
+
     //alternately, you can use an Enttec box and have an incoming MIDI cc map to the Enttec VST plugin
     //https://www.enttec.com/product/dmx-usb-interfaces/dmx-usb-pro-professional-1u-usb-to-dmx512-converter/
   }
@@ -85,18 +85,18 @@ function convertMlResultsToMidiCC() {
   sendStateCC(STATE_MUSCLE, state.muscle);
   sendStateCC(STATE_FOCUS, state.focus);
   sendStateCC(STATE_CLEAR, state.clear);
-  sendStateCC(STATE_MEDITATION, state.meditation);
+  sendStateCC(STATE_MEDIT, state.meditation);
   sendStateCC(STATE_DREAM, state.dream);
 }
 
 let midiStateBoost = 1.0
-function increaseMidiStateBoost(){
+function increaseMidiStateBoost() {
   midiStateBoost += 0.1;
   console.log("MIDI state boost is now", midiStateBoost);
 }
-function decreaseMidiStateBoost(){
+function decreaseMidiStateBoost() {
   midiStateBoost -= 0.1;
-  if (midiStateBoost < 1.0){ midiStateBoost = 1.0; }
+  if (midiStateBoost < 1.0) { midiStateBoost = 1.0; }
   console.log("MIDI state boost is now", midiStateBoost);
 }
 
@@ -123,7 +123,7 @@ function sendStateCC(stateID, stateValue) {
       let upInc = smoothingValues[0];
       let dnInc = smoothingValues[1];
 
-      
+
       if (upInc == -1 && dnInc == -1) {
 
         //no smoothing
@@ -196,22 +196,21 @@ function testMidiCCButtonClicked(buttonIndex) {
 // Update buttons to call the correct function
 function testMidiNoteButtonClicked(buttonIndex) {
   const channel = stateMidiChannels[buttonIndex];
-  const note = "C4";
+  const note = stateNotes[buttonIndex] || "C4"; // fallback to "C4" if undefined
 
   console.log("State", buttonIndex, "is sending a test note:", note, "on channel", channel);
 
   for (let i = 0; i < midiOuts.length; i++) {
     let midiOut = midiOuts[i];
 
-    // Send Note On
     midiOut.playNote(note, channel);
 
-    // Send Note Off after 250ms
     setTimeout(() => {
       midiOut.stopNote(note, channel);
     }, 250);
   }
 }
+
 
 
 
@@ -247,7 +246,7 @@ function bpmRenderLoop() {
 }
 
 // Kick off the first call
-if (PPG_QUANTIZED){
+if (PPG_QUANTIZED) {
   setTimeout(bpmRenderLoop, bpmInterval);
 }
 
@@ -257,19 +256,42 @@ function playMidiHeartbeat() {
   // Only send if heartbeat note is enabled
   if (!stateNoteOn[STATE_HEART]) return;
 
-  const channel = stateMidiChannels[STATE_HEART]; // get configured channel
-  const note = "C4"; // or "C3" if you meant that
-
-  for (let i = 0; i < midiOuts.length; i++) {
-    let midiOut = midiOuts[i];
-    midiOut.playNote(note, channel);
-  }
-
   heartPulse = 1.0;
+
+  const channel = stateMidiChannels[STATE_HEART]; // get configured channel
+  const note = "C4";
 
   for (let i = 0; i < midiOuts.length; i++) {
     let midiOut = midiOuts[i];
     midiOut.playNote(note, channel);
     setTimeout(() => midiOut.stopNote(note, channel), 250);
+  }
+}
+
+function brainwaveNoteOn(stateID, note, volume) {
+  if (!stateNoteOn[stateID]) return;
+
+  const channel = stateMidiChannels[stateID];
+  const attack = Math.max(0, Math.min(1, volume)); // Clamp between 0 and 1
+
+  console.log("brainwave note on", stateID, note, Math.round(attack * 127));
+
+  for (let i = 0; i < midiOuts.length; i++) {
+    const midiOut = midiOuts[i];
+    midiOut.channels[channel].playNote(note, {
+      attack: attack
+    });
+  }
+}
+
+function brainwaveNoteOff(stateID, note) {
+  if (!stateNoteOn[stateID]) return;
+  
+  const channel = stateMidiChannels[stateID];
+  console.log("brainwave note off", stateID, note);
+
+  for (let i = 0; i < midiOuts.length; i++) {
+    let midiOut = midiOuts[i];
+    midiOut.stopNote(note, channel);
   }
 }

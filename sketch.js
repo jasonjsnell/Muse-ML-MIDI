@@ -173,7 +173,7 @@ function draw() {
   }
   if (state.meditation > highestValue) {
     highestValue = state.meditation;
-    highestState = STATE_MEDITATION;
+    highestState = STATE_MEDIT;
   }
   if (state.dream > highestValue) {
     highestValue = state.dream;

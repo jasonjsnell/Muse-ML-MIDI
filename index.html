@@ -61,10 +61,8 @@
               <div class="col state"
                 data-tooltip="Signal noise occurs when headset sensors have no or poor contact with forehead">Signal
                 Noise</div>
-              <div class="col"><input type="checkbox" id="note-1" class="note-checkbox"
-                  data-tooltip="Toggle MIDI notes for signal noise peaks" /></div>
-              <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(1)"
-                  data-tooltip="Send single MIDI note to DAW for testing">Play</button></div>
+              <div class="col">-</div>
+              <div class="col">-</div>
               <div class="col"><input type="checkbox" id="cc-1" class="cc-checkbox"
                   data-tooltip="Toggle stream of signal noise as a MIDI CC" /></div>
               <div class="col"><button class="grey-button" onclick="testMidiCCButtonClicked(1)"
@@ -189,6 +187,7 @@
   <script src="muse/muse.js"></script>
   <script src="muse/fft.js"></script>
   <script src="muse/museDataBuffer.js"></script>
+  <script src="muse/museEEGPeakDetector.js"></script>
   <script src="muse/museEEG.js"></script>
   <script src="muse/musePPG.js"></script>
   <script src="muse/museParser.js"></script>
