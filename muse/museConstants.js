@@ -9,13 +9,14 @@ const STATE_NOISE      = 1;
 const STATE_MUSCLE     = 2;
 const STATE_FOCUS      = 3;
 const STATE_CLEAR      = 4;
-const STATE_MEDIT = 5;
+const STATE_MEDIT      = 5;
 const STATE_DREAM      = 6;
 const STATE_HEART      = 7;
 const STATE_MOVE_X     = 8;
 const STATE_MOVE_Y     = 9;
 const STATE_MOVE_Z     = 10;
 
+//note: tone js notes are an octave higher than ableton notes
 const STATE_MUSCLE_NOTE = "C4";
 const STATE_FOCUS_BETA_NOTE = "C4";
 const STATE_FOCUS_GAMMA_NOTE = "C5";

@@ -102,7 +102,7 @@ function draw() {
     //and draw it out as a red line
     //from the left side of the canvas to the right side
 
-    for (let i = 0; i <= PPG_SAMPLES_MAX; i++) {
+    for (let i = 0; i < PPG_SAMPLES_MAX; i++) {
       let x = map(i, 0, PPG_SAMPLES_MAX - 1, 0, width);
       let y = map(ppg.buffer[i], ppg.min, ppg.max, height * 0.6, height * 0.4);
       vertex(x, y); //<-- draw a line graph
@@ -133,24 +133,36 @@ function draw() {
 
   // Draw state labels with dynamic opacity
   textSize(TEXT_SIZE);
-  fill(255, 255, 255, noiseOpacity);
-  text("NOISE: " + state.noise, MARGIN_LEFT, 30);
-  fill(255, 255, 255, muscleOpacity);
-  text("MUSCLE: " + state.muscle, MARGIN_LEFT, 45);
-  fill(255, 255, 255, focusOpacity);
-  text("FOCUS: " + state.focus, MARGIN_LEFT, 60);
-  fill(255, 255, 255, clearOpacity);
-  text("CLEAR:  " + state.clear, MARGIN_LEFT, 75);
-  fill(255, 255, 255, meditateOpacity);
-  text("MEDITATE: " + state.meditation.toFixed(4), MARGIN_LEFT, 90);
-  fill(255, 255, 255, dreamOpacity);
-  text("DREAM: " + state.dream, MARGIN_LEFT, 105);
+
+  let labels = ["NOISE", "MUSCLE", "FOCUS", "CLEAR", "MEDITATE", "DREAM"];
+  let values = [state.noise, state.muscle, state.focus, state.clear, state.meditation, state.dream];
+  let statePos = [30, 45, 60, 75, 90, 105];
+
+  // settings for the bar
+  let barStartX = 130; // where the bars start horizontally
+  let barMaxWidth = 100; // maximum width when value == 1.0
+  let barHeight = 7;    // height of each bar
+
+  for (let i = 0; i < labels.length; i++) {
+    let value = values[i];
+    let opacity = Math.max(value * 255, 50);
+    // Draw the label
+    fill(255, 255, 255, opacity);
+    text(labels[i] + ": " + (Number(value) || 0).toFixed(2), MARGIN_LEFT, statePos[i]);
+
+    // Draw the bar
+    let barWidth = value * barMaxWidth;
+    fill(255, 255, 255, opacity); // bright cyan-ish color, adjust as you like
+    noStroke();
+    rect(barStartX, statePos[i] - barHeight - 2, barWidth, barHeight); 
+  }
+
 
   fill(255, 255, 255, 255);
 
   // ---- HIGHLIGHT STRONGEST STATE ----
   // Draws an arrow to the left of the most active brain state
-  let statePos = [-10, 30, 45, 60, 75, 90, 105];
+  //let statePos = [-10, 30, 45, 60, 75, 90, 105];
   let highestState = STATE_NONE;
   let highestValue = 0;
 
@@ -179,9 +191,6 @@ function draw() {
     highestValue = state.dream;
     highestState = STATE_DREAM;
   }
-
-  // Draw the arrow next to the dominant state
-  text(">", 5, statePos[highestState] - 1);
 
   //print the brainwave ampltude values
   text("DELTA:  " + (eeg.delta / 5).toFixed(1), MARGIN_LEFT, 135) + "%";

@@ -79,11 +79,10 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 16px 0 0;
   text-align: left;
-
 }
 
 .banner-subline p {
@@ -245,7 +244,7 @@ main {
 }
 
 .midi-row .col.state {
-  flex: 2; /* wider for state labels */
+  flex: 3; /* wider for state labels */
   text-align: left;
   padding-left: 10px;
 }

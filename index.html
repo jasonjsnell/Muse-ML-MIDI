@@ -15,10 +15,10 @@
     <!-- Main layout container -->
 
     <div class="banner">
-      <h1>Embodix</h1>
+      <h1>Mind Control</h1>
       <div class="banner-subline">
-        <p>Convert brainwave, heart, and motion data into MIDI commands.</p>
-        <p class="credit">Made by Primary Assembly</p>
+        <p>Use your mind as a midi controller.</p>
+        <p class="credit">Decoded from the Primary Assembly.</p>
       </div>
     </div>
 
@@ -51,6 +51,7 @@
             <!-- Header -->
             <div class="midi-row header">
               <div class="col state" data-tooltip="Brainwave, biometric, or device signal being measured">State</div>
+              <div class="col" data-tooltip="MIDI channel used for note and CC transmissions">Channel</div>
               <div class="col" data-tooltip="Toggle MIDI note output for this state">Note</div>
               <div class="col" data-tooltip="Send single MIDI note to DAW for testing">Test</div>
               <div class="col" data-tooltip="Toggle streaming MIDI CC output for this state">CC</div>
@@ -61,6 +62,7 @@
               <div class="col state"
                 data-tooltip="Signal noise occurs when headset sensors have no or poor contact with forehead">Signal
                 Noise</div>
+              <div class="col">1</div>
               <div class="col">-</div>
               <div class="col">-</div>
               <div class="col"><input type="checkbox" id="cc-1" class="cc-checkbox"
@@ -73,6 +75,7 @@
               <div class="col state"
                 data-tooltip="Detection of tension or movement in the jaw, forehead, and face, including talking">Jaw
                 / Face Tension</div>
+              <div class="col">2</div>
               <div class="col"><input type="checkbox" id="note-2" class="note-checkbox"
                   data-tooltip="Toggle MIDI notes for muscle tension peaks" /></div>
               <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(2)"
@@ -86,6 +89,7 @@
             <div class="midi-row">
               <div class="col state" data-tooltip="Detection of a focused or active mental state (beta)">Mental Focus
               </div>
+              <div class="col">3</div>
               <div class="col"><input type="checkbox" id="note-3" class="note-checkbox"
                   data-tooltip="Toggle MIDI notes that get trigged during focus (beta) or insight (gamma) peaks" />
               </div>
@@ -101,6 +105,7 @@
               <div class="col state"
                 data-tooltip="Detection of a clear, blank, or zoned out mental state. Since this state has no peaks, no MIDI notes are triggered">
                 Clear Mind</div>
+              <div class="col">4</div>
               <div class="col">-</div>
               <div class="col">-</div>
               <div class="col"><input type="checkbox" id="cc-4" class="cc-checkbox"
@@ -112,6 +117,7 @@
             <div class="midi-row">
               <div class="col state" data-tooltip="Detection of a meditative state (alpha); relaxing, and letting go">
                 Meditative State</div>
+                <div class="col">5</div>
               <div class="col"><input type="checkbox" id="note-5" class="note-checkbox"
                   data-tooltip="Toggle MIDI notes that get triggered during meditation (alpha)" /></div>
               <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(5)"
@@ -126,6 +132,7 @@
               <div class="col state"
                 data-tooltip="Detection of dreamy state (theta), like a mid-afternoon fatigue, falling asleep, or deep meditation">
                 Dreamy State</div>
+                <div class="col">6</div>
               <div class="col"><input type="checkbox" id="note-6" class="note-checkbox"
                   data-tooltip="Toggle MIDI notes that get triggered during dreamy states" /></div>
               <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(6)"
@@ -139,6 +146,7 @@
             <div class="midi-row">
               <div class="col state" data-tooltip="Detection of heartbeat (MIDI note) and HRV (MIDI CC)">Heartbeat /
                 HRV</div>
+                <div class="col">7</div>
               <div class="col"><input type="checkbox" id="note-7" class="note-checkbox"
                   data-tooltip="Send quantized MIDI note at your hearbeat's BPM" /></div>
               <div class="col"><button class="grey-button" onclick="testMidiNoteButtonClicked(7)"
@@ -151,6 +159,7 @@
 
             <div class="midi-row header">
               <div class="col state" data-tooltip="Movement data from the Muse accelerometer sensor">Movement</div>
+              <div class="col" data-tooltip="MIDI channel used for CC transmissions">Channel</div>
               <div class="col" data-tooltip="Toggle MIDI note output for this state">CC</div>
               <div class="col" data-tooltip="Send single MIDI note to DAW for testing">X</div>
               <div class="col" data-tooltip="Toggle streaming MIDI CC output for this state">Y</div>
@@ -159,6 +168,7 @@
 
             <div class="midi-row">
               <div class="col state" data-tooltip="Detection of head movement in any direction">Head Movement</div>
+              <div class="col">8</div>
               <div class="col"><input type="checkbox" id="cc-8" class="cc-checkbox"
                   data-tooltip="Toggle MIDI CC stream of X (nod), Y (ear-to-shoulder), and Z (shake) movement" />
               </div>
